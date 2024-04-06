@@ -1,2 +1,1 @@
-# Production-Project
-Level 6 Production Project
+venv\Scripts\activate

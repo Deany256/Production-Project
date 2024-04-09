@@ -1,5 +1,5 @@
-from flask import Blueprint, render_template
-from .models import Product
+from flask import Blueprint, render_template, request, redirect, url_for
+from .models import Product, db
 
 inventory_bp = Blueprint('inventory', __name__)
 
@@ -16,3 +16,18 @@ def product_list():
 def product_details(product_id):
     product = Product.query.get_or_404(product_id)
     return render_template('product_details.html', product=product)
+
+@inventory_bp.route('/add_product', methods=['GET', 'POST'])
+def add_product():
+    if request.method == 'POST':
+        name = request.form['name']
+        quantity = request.form['quantity']
+        price = request.form['price']
+        
+        new_product = Product(name=name, quantity=quantity, price=price)
+        db.session.add(new_product)
+        db.session.commit()
+        
+        return redirect(url_for('inventory.product_list'))
+    
+    return render_template('add_product.html')

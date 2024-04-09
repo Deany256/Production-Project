@@ -23,6 +23,11 @@
                 <td>{{ product.name }}</td>
                 <td>{{ product.quantity }}</td>
                 <td>{{ product.price }}</td>
+                <td>
+                    <form method="POST" action="{{ url_for('inventory.delete_product', product_id=product.id) }}" onsubmit="return confirm('Are you sure you want to delete this product?');">
+                        <button type="submit">Delete</button>
+                    </form>
+                </td>
             </tr>
             {% endfor %}
         </tbody>

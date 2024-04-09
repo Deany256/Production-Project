@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for
+from flask import Blueprint, flash, render_template, request, redirect, url_for
 from .models import Product, db
 
 inventory_bp = Blueprint('inventory', __name__)
@@ -31,3 +31,11 @@ def add_product():
         return redirect(url_for('inventory.product_list'))
     
     return render_template('add_product.html')
+
+@inventory_bp.route('/products/<int:product_id>/delete', methods=['POST'])
+def delete_product(product_id):
+    product = Product.query.get_or_404(product_id)
+    db.session.delete(product)
+    db.session.commit()
+    flash('Product deleted successfully!', 'success')
+    return redirect(url_for('inventory.product_list'))

@@ -2,3 +2,4 @@
 /__pycache__/
 /app/__pycache__/
 /database/inventory.db
+database/inventory.db

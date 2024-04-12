@@ -17,3 +17,8 @@ def app():
 def client(app):
     return app.test_client()
 
+def test_home_page(client):
+    response = client.get('/')
+    assert response.status_code == 200
+    assert b'Welcome to Inventory Management System' in response.data
+

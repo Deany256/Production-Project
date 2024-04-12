@@ -33,3 +33,13 @@ def test_add_product(client):
     assert Product.query.count() == 1
     assert Product.query.first().name == 'Test Product'
 
+def test_delete_product(client):
+    # First, add a product to the database
+    new_product = Product(name='Test Product', quantity=10, price=5.99)
+    db.session.add(new_product)
+    db.session.commit()
+
+    # Then, delete the product
+    response = client.post('/products/1/delete')
+    assert response.status_code == 302  # Redirect after deleting a product
+    assert Product.query.count() == 0

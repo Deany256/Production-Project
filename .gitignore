@@ -5,3 +5,4 @@
 /tests/__pycache__
 database/inventory.db
 /.vscode
+database/inventory.db

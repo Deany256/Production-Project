@@ -21,8 +21,13 @@ def product_details(product_id):
 def add_product():
     if request.method == 'POST':
         name = request.form['name']
-        quantity = request.form['quantity']
+        quantity = int(request.form['quantity'])
         price = request.form['price']
+        
+         # Check if quantity is greater than zero
+        if quantity <= 0:
+            flash('Quantity must be greater than zero', 'error')
+            return redirect(request.url)  # Redirect back to the form
         
         new_product = Product(name=name, quantity=quantity, price=price)
         db.session.add(new_product)

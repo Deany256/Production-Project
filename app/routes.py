@@ -65,3 +65,53 @@ def edit_product(product_id):
 
     return render_template('edit_product.html', product=product)
 
+@inventory_bp.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if current_user.is_authenticated:
+        return redirect(url_for('inventory.index'))  # Redirect if user is already logged in
+
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        # Check if the username already exists
+        if User.query.filter_by(username=username).first():
+            return "Username already exists! Please choose a different one."
+        
+        # Create a new user
+        new_user = User(username=username)
+        new_user.set_password(password)
+        db.session.add(new_user)
+        db.session.commit()
+
+        # Automatically log in the new user
+        login_user(new_user)
+        return redirect(url_for('inventory.index'))  # Redirect to index page after successful signup
+
+    return render_template('signup.html')  # Render signup form
+
+@inventory_bp.route('/login', methods=['GET', 'POST'])
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('inventory.index'))  # Redirect if user is already logged in
+
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        user = User.query.filter_by(username=username).first()
+
+        if user and user.check_password(password):
+            login_user(user)
+            return redirect(url_for('inventory.index'))  # Redirect to index page after successful login
+
+    return render_template('login.html')  # Render login form
+
+@inventory_bp.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('inventory.index'))  # Redirect to index page after logout
+
+@inventory_bp.route('/protected')
+@login_required
+def protected():
+    return 'This is a protected route. You can only see this if you are logged in.'

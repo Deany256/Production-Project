@@ -1,5 +1,6 @@
 from flask import Blueprint, flash, render_template, request, redirect, url_for
-from .models import Product, db
+from flask_login import login_user, current_user, logout_user, login_required
+from .models import Product, User, db
 
 inventory_bp = Blueprint('inventory', __name__)
 
@@ -44,3 +45,21 @@ def delete_product(product_id):
     db.session.commit()
     flash('Product deleted successfully!', 'success')
     return redirect(url_for('inventory.product_list'))
+
+@inventory_bp.route('/edit_product/<int:product_id>', methods=['GET', 'POST'])
+def edit_product(product_id):
+    product = Product.query.get_or_404(product_id)
+
+    if request.method == 'POST':
+        product.name = request.form['name']
+        product.quantity = int(request.form['quantity'])
+        product.price = request.form['price']
+
+        if product.quantity <= 0:
+            flash('Quantity must be greater than zero', 'error')
+            return redirect(request.url)
+
+        db.session.commit()
+        flash('Product updated successfully', 'success')
+        return redirect(url_for('inventory.product_list'))
+

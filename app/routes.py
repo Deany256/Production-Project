@@ -63,3 +63,5 @@ def edit_product(product_id):
         flash('Product updated successfully', 'success')
         return redirect(url_for('inventory.product_list'))
 
+    return render_template('edit_product.html', product=product)
+

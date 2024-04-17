@@ -1,6 +1,6 @@
 from . import db
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import UserMixin
+from quart_auth import UserMixin, authenticated_client
 
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)

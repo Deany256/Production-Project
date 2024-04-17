@@ -1,6 +1,6 @@
-from flask import Blueprint, flash, render_template, request, redirect, url_for
+from quart import Blueprint, flash, render_template, request, redirect, url_for
 from flask_login import login_user, current_user, logout_user, login_required
-from .models import Product, User, db
+# from .models import Product, User, db
 
 inventory_bp = Blueprint('inventory', __name__)
 

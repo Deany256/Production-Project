@@ -1,8 +1,8 @@
 import os
 
 class Config:
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///../database/inventory.db'
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    # QUART_DB_DATABASE_URL = 'sqlite:///../database/inventory2.db'
+    # SQLALCHEMY_TRACK_MODIFICATIONS = False
     SECRET_KEY = 'super_secret_key'
 
 class TestConfig(Config):

@@ -2,14 +2,10 @@ from secrets import compare_digest
 from dataclasses import dataclass
 from quart import Blueprint, redirect, request, url_for, render_template, g, flash
 from quart_auth import login_required, login_user, logout_user, AuthUser, current_user
+import hashlib
 from quart_schema import QuartSchema, validate_request
 
 inventory_bp = Blueprint('inventory', __name__)
-
-@dataclass
-class User_login:
-    username: str
-    passwork: str
     
 @inventory_bp.route('/products')
 async def product_list():
@@ -25,15 +21,44 @@ async def index():
 async def protected():
     return "Welcome to the SECURE Quart-Auth Example!"
 
+@inventory_bp.route('/signup', methods=['GET', 'POST'])
+async def signup():
+    if request.method == 'POST':
+        data = await request.form
+        username = data["username"]
+        password = data["password"]
+        # Check if the username already exists
+        
+        password_hash = hashlib.sha256()
+        password_hash.update(password.encode())
+        password_hash = password_hash.hexdigest()
+        
+        userdatabase = await g.connection.fetch_one(f"SELECT 1 FROM User WHERE username = '{username}' LIMIT 1;")
+        
+        if userdatabase != None:
+            return "Username already exists! Please choose a different one."
+        else:
+            await g.connection.execute(f"INSERT INTO user (username, password_hash) VALUES ('{username}', '{password_hash}');")
+            login_user(AuthUser(username))
+            return redirect(url_for('inventory.index'))  # Redirect to index page after successful login
+        
+    return await render_template('signup.html')  # Render signup form
+    
+
 @inventory_bp.route('/login', methods=['GET', 'POST'])
 async def login():
     if request.method == 'POST':
         data = await request.form
         username = data["username"]
         password = data["password"]
-        # username = request.form.get('username')
-        # password = request.form.get('password')
-        if username == "user" and compare_digest(password, "password"):
+        
+        userdatabase = await g.connection.fetch_one(f"SELECT * FROM user WHERE username = '{username}'")
+        
+        password_hash = hashlib.sha256()
+        password_hash.update(password.encode())
+        password_hash = password_hash.hexdigest()
+        
+        if username == userdatabase["username"] and compare_digest(password_hash, userdatabase["password_hash"]):
             login_user(AuthUser(username))
             return redirect(url_for('inventory.index'))  # Redirect to index page after successful login
     

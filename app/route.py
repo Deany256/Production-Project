@@ -13,10 +13,7 @@ class User_login:
     
 @inventory_bp.route('/products')
 async def product_list():
-    products = await g.connection.fetch_all("""
-    SELECT * from product
-    """
-    )
+    products = await g.connection.fetch_all("SELECT * from product")
     return await render_template('product_list.html', products=products)
 
 @inventory_bp.route('/')
@@ -66,7 +63,7 @@ async def add_product():
         
          # Check if quantity is greater than zero
         if quantity <= 0:
-            flash('Quantity must be greater than zero', 'error')
+            await flash('Quantity must be greater than zero', 'error')
             return redirect(request.url)  # Redirect back to the form
         
         new_product = await g.connection.execute(f"INSERT INTO product (name, quantity, price) VALUES ('{name}', {quantity}, {price});")
@@ -79,7 +76,7 @@ async def add_product():
 @inventory_bp.route('/products/<int:product_id>/delete', methods=['POST'])
 async def delete_product(product_id):
     product = await g.connection.execute(f"DELETE FROM Product WHERE id = {product_id};")
-    flash('Product deleted successfully!', 'success')
+    await flash('Product deleted successfully!', 'success')
     return redirect(url_for('inventory.product_list'))
 
 @inventory_bp.route('/products/<int:product_id>/edit', methods=['GET', 'POST'])
@@ -94,12 +91,12 @@ async def edit_product(product_id):
         price = form['price']
 
         if quantity <= 0:
-            flash('Quantity must be greater than zero', 'error')
+            await flash('Quantity must be greater than zero', 'error')
             return redirect(request.url)
 
         await g.connection.execute(f"UPDATE Product SET name = '{name}', quantity = {quantity}, price = {price} WHERE id = {product_id};")
         
-        flash('Product updated successfully', 'success')
+        await flash('Product updated successfully', 'success')
         return redirect(url_for('inventory.product_list'))
 
     return await render_template('edit_product.html', product=product)

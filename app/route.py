@@ -49,8 +49,11 @@ async def logout():
     return redirect(url_for('inventory.index'))  # Redirect to index page after logout
 
 @inventory_bp.route('/products/<int:product_id>')
-def product_details(product_id):
-    pass
+async def product_details(product_id):
+    product = await g.connection.fetch_one(f"""
+                                     SELECT * FROM product WHERE id = {product_id}
+    """)
+    return await render_template('product_details.html', product=product)
 
 @inventory_bp.route('/add_product', methods=['GET', 'POST'])
 def add_product():

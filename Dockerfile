@@ -10,8 +10,8 @@
 FROM python:3.10
 
 # Set environment variables for Flask
-ENV FLASK_APP=run.py
-ENV FLASK_RUN_HOST=0.0.0.0
+ENV QUART_APP=run.py
+ENV QUART_RUN_HOST=0.0.0.0
 
 # Set up the working directory in the container
 WORKDIR /app
@@ -29,4 +29,4 @@ COPY . .
 EXPOSE 5000
 
 # Run the application
-CMD ["flask", "run"]
+CMD ["quart", "run"]

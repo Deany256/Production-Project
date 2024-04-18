@@ -14,7 +14,7 @@ async def product_list():
 
 @inventory_bp.route('/')
 async def index():
-    return "Welcome to the Quart-Auth Example!"
+    return await render_template('index.html')
 
 @inventory_bp.route('/protected')
 @login_required
